@@ -9,11 +9,8 @@ import java.util.Map;
 
 @Repository
 @Mapper
-public interface SelldetailDao {
-    @Select("select * from selldetail join goods on selldetail.goodsNo=goods.goodsNo join goodstype on goods.goodstypeid=goodstype.goodsTypeId")
-    public List<Map> selectSell();
-
-
-
+public interface SelltotalDao {
+    @Select("select * from selltotal")
+    public List<Map> selectSellTal();
 
 }

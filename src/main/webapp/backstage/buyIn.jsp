@@ -21,36 +21,50 @@
 <button id="submit">提交</button>
 <form role="form" class="form-inline">
     <div class="form-group">
-        <label for="orderid">流水号</label>
-        <input type="text" class="form-control" id="orderid" >
+        <label for="selltoNo">销售编号</label>
+        <input type="text" class="form-control" id="selltoNo" readonly>
     </div>
     <div class="form-group">
-        <label for="caigoudate">申请日期</label>
-        <input type="text" class="form-control" id="caigoudate" >
+        <label for="selltoTime">销售时间</label>
+        <input type="text" class="form-control" id="selltoTime" >
     </div>
     <div class="form-group">
-        <label for="caigouperson">申请人</label>
-        <input type="text" class="form-control" id="caigouperson" value="${userInfo.userName}">
+        <label for="selltoClient">销售客户</label>
+        <input type="text" class="form-control" id="selltoClient" value="${userInfo.userName}">
     </div>
     <div class="form-group">
-        <label for="caigoudept">申请部门</label>
-        <input type="text" class="form-control" id="caigoudept" >
+        <label for="selltoMan">操作人</label>
+        <input type="text" class="form-control" id="selltoMan" >
+    </div>
+    <div class="form-group">
+        <label for="selltoExplain">说明</label>
+        <input type="text" class="form-control" id="selltoExplain" >
+    </div>
+    <div class="form-group">
+        <label for="selltoOrdSta">订单状况</label>
+        <input type="text" class="form-control" id="selltoOrdSta" >
+    </div>
+    <div class="form-group">
+        <label for="selltoPrices">销售总价</label>
+        <input type="text" class="form-control" id="selltoPrices" >
     </div>
 </form>
 <button id="btn">添加商品</button>
 <table  class="table">
     <thead>
     <tr>
-        <th>商品ID</th>
+
         <th>商品编号</th>
         <th>商品名称</th>
         <th>商品类别</th>
-        <th>规格型号</th>
+        <th>商品规格</th>
         <th>采购单价</th>
         <th>销售单价</th>
-        <th>数量</th>
+        <th>建议零售价</th>
         <th>产地</th>
         <th>计量单位</th>
+        <th>销售编号</th>
+        <th>销售数量</th>
         <th>小计</th>
         <th>操作</th>
     </tr>
@@ -71,15 +85,16 @@
     $("#btn").click(function(){
         var tr="<tr>"
         tr+="<td></td>";
-        tr+="<td></td>";
         tr+="<td><select class='goodsName'><option>--选择商品--</option></select></td>";
         tr+="<td></td>";
         tr+="<td></td>";
         tr+="<td></td>";
         tr+="<td></td>";
+        tr+="<td></td>";
+        tr+="<td></td>";
+        tr+="<td></td>";
+        tr+="<td></td>";
         tr+="<td><input></td>";
-        tr+="<td></td>";
-        tr+="<td></td>";
         tr+="<td>0</td>";
 
         tr+="<td><button class='btn'>删除</button></td>";
@@ -94,7 +109,7 @@
     var goodsinfo;
     function getGoods(){
         $.ajax({
-            url:"selectGoods",
+            url:"selectSell",
             //contextType:"application/json",
             type:"post",
             dataType:"json",
@@ -120,14 +135,15 @@
             if($(this).val()==goodsinfo[i].goodsNo){
                 //$(this).parent().prev().text();
                 // $(this).parent().next().text(goodsinfo[i].typeName);
-                $(this).parent().parent().children("td").eq(0).text(goodsinfo[i].goodsId);
-                $(this).parent().parent().children("td").eq(1).text(goodsinfo[i].goodsNo);
-                $(this).parent().parent().children("td").eq(3).text(goodsinfo[i].goodsTypeName);
-                $(this).parent().parent().children("td").eq(4).text(goodsinfo[i].goodsSize);
-                $(this).parent().parent().children("td").eq(5).text(goodsinfo[i].proPrice);
-                $(this).parent().parent().children("td").eq(6).text(goodsinfo[i].salePrice);
-                $(this).parent().parent().children("td").eq(8).text(goodsinfo[i].goodsPlace);
-                $(this).parent().parent().children("td").eq(9).text(goodsinfo[i].unit);
+                $(this).parent().parent().children("td").eq(0).text(goodsinfo[i].goodsNo);
+                $(this).parent().parent().children("td").eq(2).text(goodsinfo[i].goodsTypeName);
+                $(this).parent().parent().children("td").eq(3).text(goodsinfo[i].goodsSize);
+                $(this).parent().parent().children("td").eq(4).text(goodsinfo[i].proPrice);
+                $(this).parent().parent().children("td").eq(5).text(goodsinfo[i].salePrice);
+                $(this).parent().parent().children("td").eq(6).text(goodsinfo[i].srPrice);
+                $(this).parent().parent().children("td").eq(7).text(goodsinfo[i].goodsPlace);
+                $(this).parent().parent().children("td").eq(8).text(goodsinfo[i].unit);
+                $(this).parent().parent().children("td").eq(9).text(goodsinfo[i].selltoNo);
 
             }
 
@@ -145,30 +161,63 @@
     })
 
     $("#mytbd").on("keyup","input",function(){
-        var inprice= $(this).parent().prev().text();
-        var num= $(this).val();
-        $(this).parent().next().next().next().text(inprice*num);
+        var proPrice= $(this).parent().prev().prev().prev().prev().prev().prev().text();
+        var selldeNum= $(this).val();
+        $(this).parent().next().text(proPrice*selldeNum);
     })
 
 
 
     //提交按钮
     $("#submit").click(function () {
-        var orderid=$("#orderid").val();
-        var applydate=$("#caigoudate").val();
-        var applyperson=$("#caigouperson").val();
-        var applydept=$("#caigoudept").val();
+        var selltoNo=$("#selltoNo").val();
+        var selltoTime=$("#selltoTime").val();
+        var selltoClient=$("#selltoClient").val();
+        var selltoMan=$("#selltoMan").val();
+        var selltoExplain=$("#selltoExplain").val();
+        var selltoOrdSta=$("#selltoOrdSta").val();
+        var selltoPrices=$("#selltoPrices").val();
         var goodsarr=new Array();
         $("#mytbd tr").each(function () {
             var goods=new Object();
-            goods.goodsId=$(this).children("td").eq(0).text();
-            goods.orderid=orderid;
-            goods.goodsNum=$(this).find("input").val();
+            goods.goodsNo=$(this).children("td").eq(0).text();
+            goods.selltoNo=selltoNo;
+            goods.selldeNum=$(this).find("input").val();
+            goods.selldeSub=$(this).children("td").eq(11).text();
             goodsarr.push(goods);
         })
-        var jsonstr={"orderid":orderid,"applydate":applydate,"applyperson":applyperson,"applydept":applydept,"goods":goodsarr}
+        var jsonstr={"selltoNo":selltoNo,"selltoTime":selltoTime,"selltoClient":selltoClient,"selltoMan":selltoMan,"selltoExplain":selltoExplain,"selltoOrdSta":selltoOrdSta,"selltoPrices":selltoPrices,"goods":goodsarr}
         alert(JSON.stringify(jsonstr))
-    })
+        $.ajax({
+            url:"applyOrder",
+            type:"post",
+            contentType:"application/json",
+            data:JSON.stringify(jsonstr),
+            success:function(data){
+                if(data=="true"){
+                    alert("提交成功，等待审核");
+                    $("#submit").prop("disabled",true);
+                }
+                else{
+                    alert("提交失败");
+                }
 
+            }
+
+        })
+    })
+    //页面加载时
+    $(function(){
+        $.ajax({
+            url:"getNo",
+            type:"post",
+            dataType:"text",
+            success:function(data){
+                $("#selltoNo").val(data);
+            }
+
+        })
+
+    })
 
 </script>
