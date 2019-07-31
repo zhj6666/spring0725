@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhj.spring0725.dao.OrderDao">
+    <select id="getCount"  resultType="int">
+       select count(selltoNo) from selltotal
+    </select>
+    <insert id="addSelltotal" parameterType="java.util.Map">
+    insert into selltotal(selltoNo,selltoTime,selltoClient,selltoMan,selltoExplain,selltoOrdSta,selltoPrices)
+    values(#{selltoNo},now(),#{selltoClient},#{selltoMan},#{selltoExplain},#{selltoOrdSta},#{selltoPrices})
+
+    </insert>
+    <insert id="addSelldetail" parameterType="java.util.List">
+          insert into selldetail(goodsNo,selltoNo,selldeNum,selldeSub) values
+         <foreach collection="list" item="item" separator=",">
+             (#{item.goodsNo},#{item.selltoNo},#{item.selldeNum},#{item.selldeSub})
+         </foreach>
+    </insert>
+
+</mapper>
